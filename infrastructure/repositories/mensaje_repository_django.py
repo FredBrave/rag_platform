@@ -1,7 +1,7 @@
 from typing import List
 from core.models_domain.conversaciones import Mensaje
 from core.repositories.conversacion_repository import MensajeRepository
-from core.models.conversaciones import Mensaje as MensajeORM
+from models.conversaciones import Mensaje as MensajeORM
 
 class MensajeRepositoryDjango(MensajeRepository):
 

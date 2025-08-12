@@ -1,7 +1,7 @@
 from typing import List, Optional
 from core.models_domain.api_keys import APIKey
 from core.repositories.api_key_repository import APIKeyRepository
-from core.models.api_keys import APIKey as APIKeyORM
+from models.api_keys import APIKey as APIKeyORM
 
 class APIKeyRepositoryDjango(APIKeyRepository):
 

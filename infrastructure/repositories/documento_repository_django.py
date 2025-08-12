@@ -1,9 +1,9 @@
 # infraestructura/repositorios/documento_repository_impl.py
 from core.repositories.documento_repository import DocumentoRepository
 from core.models_domain.documentos import Documento
-from core.models.documentos import DocumentoModel
+from models.documentos import DocumentoModel
 
-class DocumentoRepositoryDjangoORM(DocumentoRepository):
+class DocumentoRepositoryDjango(DocumentoRepository):
 
     def guardar(self, documento: Documento) -> None:
         DocumentoModel.objects.create(
@@ -17,5 +17,8 @@ class DocumentoRepositoryDjangoORM(DocumentoRepository):
         return Documento(id=doc.id, nombre=doc.nombre, contenido=doc.contenido)
 
     def listar(self):
-        docs = DocumentoModel.objects.all()
-        return [Documento(id=doc.id, nombre=doc.nombre, contenido=doc.contenido) for doc in docs]
+        docs = DocumentoModel.objects.only("id", "nombre")
+        return [Documento(id=doc.id, nombre=doc.nombre, contenido=None) for doc in docs]
+    
+    def eliminar(self, documento_id: str) -> None:
+        DocumentoModel.objects.filter(id=documento_id).delete()

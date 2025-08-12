@@ -6,6 +6,9 @@ class APIKey(models.Model):
     proveedor = models.CharField(max_length=50, choices=[("openai", "OpenAI"), ("anthropic", "Anthropic")])
     clave = models.CharField(max_length=200)
     activa = models.BooleanField(default=True)
+    eliminado = models.BooleanField(default=False)
+    fecha_creacion = models.DateTimeField(auto_now_add=True)
+    fecha_actualizacion = models.DateTimeField(auto_now=True)
     
     def __str__(self):
         return f"{self.proveedor} - {self.usuario.username}"

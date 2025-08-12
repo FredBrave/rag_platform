@@ -1,7 +1,7 @@
 from typing import List, Optional
 from core.models_domain.conversaciones import Conversacion
 from core.repositories.conversacion_repository import ConversacionRepository
-from core.models.conversaciones import Conversacion as ConversacionORM
+from models.conversaciones import Conversacion as ConversacionORM
 
 class ConversacionRepositoryDjango(ConversacionRepository):
 

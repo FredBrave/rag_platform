@@ -1,7 +1,7 @@
 from typing import List, Optional
 from core.models_domain.rag import RAG
 from core.repositories.rag_respository import RAGRepository
-from core.models.rag import RAG as RAGORM 
+from models.rag import RAG as RAGORM 
 
 class RAGRepositoryDjango(RAGRepository):
 

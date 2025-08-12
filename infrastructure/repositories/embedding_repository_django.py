@@ -1,7 +1,7 @@
 from typing import List, Optional
 from core.models_domain.embedding import Embedding
 from core.repositories.embedding_repository import EmbeddingRepository
-from core.models.embedding import Embedding as EmbeddingORM
+from models.embedding import Embedding as EmbeddingORM
 
 class EmbeddingRepositoryDjango(EmbeddingRepository):
 

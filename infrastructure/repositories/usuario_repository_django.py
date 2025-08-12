@@ -1,7 +1,7 @@
 from typing import Optional
 from core.models_domain.usuarios import Usuario
 from core.repositories.usuario_repository import UsuarioRepository
-from core.models.usuarios import Usuario as UsuarioORM
+from models.usuarios import Usuario as UsuarioORM
 
 class UsuarioRepositoryDjango(UsuarioRepository):
 
