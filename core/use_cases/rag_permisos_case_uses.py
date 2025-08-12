@@ -7,7 +7,7 @@ class ObtenerPermisosPorRAG:
     def __init__(self, repo: RAGPermisoRepository):
         self.repo = repo
 
-    def ejecutar(self, rag_id: int) -> List[RAGPermiso]:
+    def execute(self, rag_id: int) -> List[RAGPermiso]:
         return self.repo.get_permisos_por_rag(rag_id)
 
 
@@ -15,7 +15,7 @@ class PuedeUsuarioEditarRAG:
     def __init__(self, repo: RAGPermisoRepository):
         self.repo = repo
 
-    def ejecutar(self, rag_id: int, usuario_id: int) -> bool:
+    def execute(self, rag_id: int, usuario_id: int) -> bool:
         return self.repo.puede_usuario_editar(rag_id, usuario_id)
 
 
@@ -23,7 +23,7 @@ class CrearPermisoRAG:
     def __init__(self, repo: RAGPermisoRepository):
         self.repo = repo
 
-    def ejecutar(self, rag_id: int, usuario_id: int, puede_editar: bool) -> RAGPermiso:
+    def execute(self, rag_id: int, usuario_id: int, puede_editar: bool) -> RAGPermiso:
         permiso = RAGPermiso(
             rag_id=rag_id,
             usuario_id=usuario_id,
@@ -36,5 +36,5 @@ class EliminarPermisoRAG:
     def __init__(self, repo: RAGPermisoRepository):
         self.repo = repo
 
-    def ejecutar(self, permiso_id: int) -> None:
+    def execute(self, permiso_id: int) -> None:
         self.repo.eliminar_permiso(permiso_id)
