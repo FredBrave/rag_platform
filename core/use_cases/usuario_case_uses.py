@@ -1,4 +1,3 @@
-# core/use_cases/usuario_use_cases.py
 from typing import Optional
 from core.models_domain.usuarios import Usuario
 from core.repositories.usuario_repository import UsuarioRepository

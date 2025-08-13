@@ -1,4 +1,3 @@
-# core/use_cases/embedding_use_cases.py
 from typing import List, Optional
 from core.models_domain.embedding import Embedding
 from core.repositories.embedding_repository import EmbeddingRepository

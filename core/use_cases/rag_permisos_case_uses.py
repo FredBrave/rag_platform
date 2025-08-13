@@ -1,4 +1,3 @@
-# usecases/rag_permiso_usecases.py
 from typing import List
 from core.models_domain.rag import RAGPermiso
 from core.repositories.rag_respository import RAGPermisoRepository

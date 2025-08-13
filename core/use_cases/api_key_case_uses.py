@@ -1,5 +1,4 @@
 from typing import List, Optional
-from datetime import datetime
 from core.models_domain.api_keys import APIKey
 from core.repositories.api_key_repository import APIKeyRepository
 
