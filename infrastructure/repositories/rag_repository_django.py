@@ -1,7 +1,7 @@
 from typing import List, Optional
 from core.models_domain.rag import RAG
 from core.repositories.rag_respository import RAGRepository
-from models.rag import RAG as RAGORM 
+from infrastructure.models.rag import RAG as RAGORM 
 
 class RAGRepositoryDjango(RAGRepository):
 
@@ -10,15 +10,15 @@ class RAGRepositoryDjango(RAGRepository):
             obj = RAGORM.objects.get(id=rag.id)
             obj.nombre = rag.nombre
             obj.descripcion = rag.descripcion
-            obj.privado = rag.privado
-            obj.usuario_id = rag.usuario_id
+            obj.privacidad = rag.privacidad
+            obj.creador_id = rag.creador_id
             obj.save()
         else:
             obj = RAGORM.objects.create(
                 nombre=rag.nombre,
                 descripcion=rag.descripcion,
-                privado=rag.privado,
-                usuario_id=rag.usuario_id
+                privacidad=rag.privacidad,
+                creador_id=rag.creador_id
             )
             rag.id = obj.id
         return rag
@@ -30,21 +30,23 @@ class RAGRepositoryDjango(RAGRepository):
                 id=obj.id,
                 nombre=obj.nombre,
                 descripcion=obj.descripcion,
-                privado=obj.privado,
-                usuario_id=obj.usuario_id
+                privacidad=obj.privacidad,
+                creador_id=obj.creador_id
             )
         except RAGORM.DoesNotExist:
             return None
 
     def listar_por_usuario(self, usuario_id: int) -> List[RAG]:
-        objs = RAGORM.objects.filter(usuario_id=usuario_id)
+        objs = RAGORM.objects.filter(creador_id=usuario_id)
         return [
             RAG(
                 id=obj.id,
                 nombre=obj.nombre,
                 descripcion=obj.descripcion,
-                privado=obj.privado,
-                usuario_id=obj.usuario_id
+                privacidad=obj.privacidad,
+                creador_id=obj.creador_id,
+                modelo_llm=obj.modelo_llm,
+                embedding_model=obj.embedding_model
             ) for obj in objs
         ]
 

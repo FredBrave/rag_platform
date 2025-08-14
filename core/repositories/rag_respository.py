@@ -10,7 +10,7 @@ class RAGPermisoRepository(ABC):
         pass
 
     @abstractmethod
-    def puede_usuario_editar(self, rag_id: int, usuario_id: int) -> bool:
+    def puede_usuario_editar(self, rag_id: int, creador_id: int) -> bool:
         pass
 
     @abstractmethod
@@ -35,7 +35,7 @@ class RAGRepository(ABC):
         pass
 
     @abstractmethod
-    def listar_por_usuario(self, usuario_id: int) -> List[RAG]:
+    def listar_por_usuario(self, creador_id: int) -> List[RAG]:
         """Lista todos los RAGs que pertenecen a un usuario."""
         pass
 

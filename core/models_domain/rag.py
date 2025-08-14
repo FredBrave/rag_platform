@@ -8,7 +8,7 @@ class RAG:
     nombre: str
     descripcion: str
     creador_id: int
-    privacidad: str
+    privacidad: bool
     modelo_llm: str
     embedding_model: str
     fecha_creacion: Optional[datetime] = None
@@ -18,5 +18,5 @@ class RAG:
 class RAGPermiso:
     id: int | None
     rag_id: int
-    usuario_id: int
+    creador_id: int
     puede_editar: bool
