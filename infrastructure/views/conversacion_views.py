@@ -10,9 +10,9 @@ def CrearConversacionView(request):
     data = request.data
     caso_uso = CrearConversacion(ConversacionRepositoryDjango())
     conversacion = caso_uso.execute(
-        rag_id=data.get("nombre"),
-        usuario_id=data.get("descripcion"),
-        titulo=data.get("privacidad")
+        rag_id=data.get("rag_id"),
+        usuario_id=data.get("usuario_id"),
+        titulo=data.get("titulo")
         )
     serializer = ConversacionSerializer(conversacion)
     
