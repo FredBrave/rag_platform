@@ -1,11 +1,12 @@
 from typing import List, Optional
-from core.models_domain.conversaciones import Conversacion
+from core.models_domain.conversaciones import Conversacion as ConversacionDomain
 from core.repositories.conversacion_repository import ConversacionRepository
-from models.conversaciones import Conversacion as ConversacionORM
+from infrastructure.models.conversaciones import Conversacion as ConversacionORM
+
 
 class ConversacionRepositoryDjango(ConversacionRepository):
 
-    def guardar(self, conversacion: Conversacion) -> Conversacion:
+    def guardar(self, conversacion: ConversacionDomain) -> ConversacionORM:
         if conversacion.id:
             obj = ConversacionORM.objects.get(id=conversacion.id)
             obj.rag_id = conversacion.rag_id
@@ -21,12 +22,14 @@ class ConversacionRepositoryDjango(ConversacionRepository):
                 fecha_creacion=conversacion.fecha_creacion
             )
             conversacion.id = obj.id
-        return conversacion
+        return obj
 
-    def obtener_por_id(self, conversacion_id: int) -> Optional[Conversacion]:
+    def obtener_por_id(self, conversacion_id: int, as_orm: bool = False):
         try:
             obj = ConversacionORM.objects.get(id=conversacion_id)
-            return Conversacion(
+            if as_orm:
+                return obj
+            return ConversacionDomain(
                 id=obj.id,
                 rag_id=obj.rag_id,
                 usuario_id=obj.usuario_id,
@@ -36,10 +39,12 @@ class ConversacionRepositoryDjango(ConversacionRepository):
         except ConversacionORM.DoesNotExist:
             return None
 
-    def listar_por_usuario(self, usuario_id: int) -> List[Conversacion]:
+    def listar_por_usuario(self, usuario_id: int, as_orm: bool = False):
         objs = ConversacionORM.objects.filter(usuario_id=usuario_id)
+        if as_orm:
+            return objs
         return [
-            Conversacion(
+            ConversacionDomain(
                 id=obj.id,
                 rag_id=obj.rag_id,
                 usuario_id=obj.usuario_id,
