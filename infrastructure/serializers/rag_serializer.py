@@ -1,18 +1,12 @@
 from rest_framework import serializers
-from core.models_domain.rag import RAG
 
 class RAGSerializer(serializers.Serializer):
-    id = serializers.IntegerField(read_only=True)
-    nombre = serializers.CharField(max_length=255)
+    id = serializers.IntegerField()
+    nombre = serializers.CharField()
     descripcion = serializers.CharField()
-    privado = serializers.BooleanField()
-    usuario_id = serializers.IntegerField()
-
-    def create(self, validated_data):
-        return RAG(**validated_data)
-
-    def update(self, instance, validated_data):
-        instance.nombre = validated_data.get("nombre", instance.nombre)
-        instance.descripcion = validated_data.get("descripcion", instance.descripcion)
-        instance.privado = validated_data.get("privado", instance.privado)
-        return instance
+    creador_id = serializers.IntegerField()
+    privacidad = serializers.CharField()
+    fecha_creacion = serializers.DateTimeField()
+    fecha_actualizacion = serializers.DateTimeField()
+    modelo_llm = serializers.CharField()
+    embedding_model = serializers.CharField()

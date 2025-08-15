@@ -3,52 +3,79 @@ from core.models_domain.rag import RAG
 from core.repositories.rag_respository import RAGRepository
 from infrastructure.models.rag import RAG as RAGORM 
 
-class RAGRepositoryDjango(RAGRepository):
-
+class RagRepositoryDjango(RAGRepository):
     def guardar(self, rag: RAG) -> RAG:
-        if rag.id is not None:
-            obj = RAGORM.objects.get(id=rag.id)
-            obj.nombre = rag.nombre
-            obj.descripcion = rag.descripcion
-            obj.privacidad = rag.privacidad
-            obj.creador_id = rag.creador_id
-            obj.save()
+        """Guarda o actualiza un RAG desde el modelo de dominio."""
+        if rag.id:
+            rag_obj = RAGORM.objects.get(pk=rag.id)
+            rag_obj.nombre = rag.nombre
+            rag_obj.descripcion = rag.descripcion
+            rag_obj.creador_id = rag.creador_id
+            rag_obj.privacidad = rag.privacidad
+            rag_obj.modelo_llm = rag.modelo_llm
+            rag_obj.embedding_model = rag.embedding_model
+            rag_obj.save()
         else:
-            obj = RAGORM.objects.create(
+            rag_obj = RAGORM.objects.create(
                 nombre=rag.nombre,
                 descripcion=rag.descripcion,
+                creador_id=rag.creador_id,
                 privacidad=rag.privacidad,
-                creador_id=rag.creador_id
+                modelo_llm=rag.modelo_llm,
+                embedding_model=rag.embedding_model,
+                fecha_creacion=rag.fecha_creacion,
             )
-            rag.id = obj.id
-        return rag
+        return RAG(
+            id=rag_obj.id,
+            nombre=rag_obj.nombre,
+            descripcion=rag_obj.descripcion,
+            creador_id=rag_obj.creador_id,
+            privacidad=rag_obj.privacidad,
+            modelo_llm=rag_obj.modelo_llm,
+            embedding_model=rag_obj.embedding_model,
+            fecha_creacion=rag_obj.fecha_creacion,
+            fecha_actualizacion=rag_obj.fecha_actualizacion
+        )
 
     def obtener_por_id(self, rag_id: int) -> Optional[RAG]:
         try:
-            obj = RAGORM.objects.get(id=rag_id)
+            rag_obj = RAGORM.objects.get(pk=rag_id)
             return RAG(
-                id=obj.id,
-                nombre=obj.nombre,
-                descripcion=obj.descripcion,
-                privacidad=obj.privacidad,
-                creador_id=obj.creador_id
+                id=rag_obj.id,
+                nombre=rag_obj.nombre,
+                descripcion=rag_obj.descripcion,
+                creador_id=rag_obj.creador_id,
+                privacidad=rag_obj.privacidad,
+                modelo_llm=rag_obj.modelo_llm,
+                embedding_model=rag_obj.embedding_model,
+                fecha_creacion=rag_obj.fecha_creacion,
+                fecha_actualizacion=rag_obj.fecha_actualizacion
             )
         except RAGORM.DoesNotExist:
             return None
-
-    def listar_por_usuario(self, usuario_id: int) -> List[RAG]:
-        objs = RAGORM.objects.filter(creador_id=usuario_id)
+    def listar_por_usuario(self, creador_id: int) -> List[RAG]:
+        """Devuelve una lista de RAGs para un usuario específico."""
+        rag_objs = RAGORM.objects.filter(creador_id=creador_id)
         return [
             RAG(
                 id=obj.id,
                 nombre=obj.nombre,
                 descripcion=obj.descripcion,
-                privacidad=obj.privacidad,
                 creador_id=obj.creador_id,
+                privacidad=obj.privacidad,
                 modelo_llm=obj.modelo_llm,
-                embedding_model=obj.embedding_model
-            ) for obj in objs
+                embedding_model=obj.embedding_model,
+                fecha_creacion=obj.fecha_creacion,
+                fecha_actualizacion=obj.fecha_actualizacion
+            )
+            for obj in rag_objs
         ]
 
-    def eliminar(self, rag_id: int) -> None:
-        RAGORM.objects.filter(id=rag_id).delete()
+    def eliminar(self, rag_id: int) -> bool:
+        """Elimina un RAG por ID. Devuelve True si se eliminó, False si no existía."""
+        try:
+            rag_obj = RAGORM.objects.get(pk=rag_id)
+            rag_obj.delete()
+            return True
+        except RAGORM.DoesNotExist:
+            return False

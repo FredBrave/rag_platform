@@ -1,72 +1,57 @@
-from django.http import JsonResponse, HttpResponseNotFound, HttpResponseBadRequest
-from django.views.decorators.csrf import csrf_exempt
+from rest_framework.response import Response
+from rest_framework.decorators import api_view
+from core.use_cases.rag_case_uses import ObtenerRagPorId, CrearRAG, EliminarRAG, ListarRAGsPorUsuario
+from infrastructure.repositories.rag_repository_django import RagRepositoryDjango
+from infrastructure.serializers.rag_serializer import RAGSerializer
+from rest_framework import status
 import json
 
-from core.use_cases.rag_case_uses import CrearRAG, ObtenerRAGPorId, ListarRAGsPorUsuario, EliminarRAG
-
-from infrastructure.repositories.rag_repository_django import RAGRepositoryDjango
-
-
-@csrf_exempt
+@api_view(['POST'])
 def crear_rag_view(request):
-    if request.method != "POST":
-        return HttpResponseBadRequest("Solo se permite POST.")
-
-    data = json.loads(request.body.decode("utf-8"))
-    nombre = data.get("nombre")
-    descripcion = data.get("descripcion")
-    privado = data.get("privado", False)
-    usuario_id = data.get("usuario_id")
-
-    use_case = CrearRAG(RAGRepositoryDjango())
-    rag = use_case.execute(nombre, descripcion, privado, usuario_id)
-
-    return JsonResponse({
-        "id": rag.id,
-        "nombre": rag.nombre,
-        "descripcion": rag.descripcion,
-        "privado": rag.privado,
-        "usuario_id": rag.usuario_id
-    })
+    data = request.data
+    use_case = CrearRAG(RagRepositoryDjango())
+    rag = use_case.execute(
+        nombre=data.get("nombre"),
+        descripcion=data.get("descripcion"),
+        privacidad=data.get("privacidad"),
+        creador_id=data.get("creador_id"),
+        modelo_llm=data.get("modelo_llm", "gpt-4o"),
+        embedding_model=data.get("embedding_model", "text-embedding-3-small")
+    )
+    serializer = RAGSerializer(rag.__dict__)
+    return Response(serializer.data)
+    
 
 
+@api_view(['GET'])
 def obtener_rag_por_id_view(request, rag_id):
-    use_case = ObtenerRAGPorId(RAGRepositoryDjango())
-    rag = use_case.execute(rag_id)
+    use_case = ObtenerRagPorId(RagRepositoryDjango())
+    rag_obj = use_case.execute(rag_id)
 
-    if not rag:
-        return HttpResponseNotFound("RAG no encontrado.")
+    if rag_obj is None:
+        return Response(
+            {"error": "RAG no encontrado"},
+            status=status.HTTP_404_NOT_FOUND
+        )
 
-    return JsonResponse({
-        "id": rag.id,
-        "nombre": rag.nombre,
-        "descripcion": rag.descripcion,
-        "privacidad": rag.privacidad,
-        "usuario_id": rag.usuario_id
-    })
+    serializer = RAGSerializer(rag_obj.__dict__)
+    return Response(serializer.data, status=status.HTTP_200_OK)
 
-
+@api_view(['GET'])
 def listar_rags_por_usuario_view(request, creador_id):
-    use_case = ListarRAGsPorUsuario(RAGRepositoryDjango())
+    use_case = ListarRAGsPorUsuario(RagRepositoryDjango())
     rags = use_case.execute(creador_id)
-
-    return JsonResponse([
-        {
-            "id": rag.id,
-            "nombre": rag.nombre,
-            "descripcion": rag.descripcion,
-            "privacidad": rag.privacidad,
-            "creador_id": rag.creador_id
-        } for rag in rags
-    ], safe=False)
+    if rags is None:
+        return Response({"error":"Usuario no existe o no tiene ningun RAG"}, status=status.HTTP_404_NOT_FOUND)
+    serializer = RAGSerializer(rags, many=True)
+    return Response(serializer.data, status=status.HTTP_200_OK)
 
 
-@csrf_exempt
+@api_view(['DELETE'])
 def eliminar_rag_view(request, rag_id):
-    if request.method != "DELETE":
-        return HttpResponseBadRequest("Solo se permite DELETE.")
-
-    use_case = EliminarRAG(RAGRepositoryDjango())
-    use_case.execute(rag_id)
-
-    return JsonResponse({"mensaje": "RAG eliminado correctamente."})
+    use_case = EliminarRAG(RagRepositoryDjango())
+    try:
+        use_case.execute(rag_id)
+        return Response({"message": "RAG eliminado correctamente."}, status=status.HTTP_200_OK)
+    except Exception as e:
+        return Response({"error": str(e)}, status=status.HTTP_404_NOT_FOUND)
