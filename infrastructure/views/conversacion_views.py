@@ -1,8 +1,12 @@
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from infrastructure.serializers.conversacion_serializer import ConversacionSerializer
+from infrastructure.serializers.mensaje_serializer import MensajeSerializer
 from infrastructure.repositories.conversacion_repository_django import ConversacionRepositoryDjango
+from infrastructure.repositories.mensaje_repository_django import MensajeRepositoryDjango
 from core.use_cases.conversacion_case_uses import CrearConversacion, ListarConversacionesPorUsuario, ObtenerConversacionPorId, EliminarConversacion
+from core.use_cases.mensaje_case_uses import CrearMensaje, ListarMensajesPorConversacion, EliminarMensajesPorConversacion
+
 from rest_framework import status
 
 @api_view(['POST'])
@@ -41,3 +45,31 @@ def EliminarConversacionView(requets, conversacion_id):
         caso_uso = EliminarConversacion(ConversacionRepositoryDjango())
         caso_uso.execute(conversacion_id)
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+
+@api_view(["GET", "POST"])
+def mensajes_list_create(request, conversacion_id):
+    if request.method == "GET":
+        caso_uso = ListarMensajesPorConversacion(MensajeRepositoryDjango())
+        mensajes = caso_uso.execute(conversacion_id)
+        serializer = MensajeSerializer(mensajes, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    elif request.method == "POST":
+        data = request.data
+        caso_uso = CrearMensaje(MensajeRepositoryDjango())
+        mensaje_guardado = caso_uso.execute(
+            conversacion_id=conversacion_id,
+            contenido=data.get("contenido"),
+            rol=data.get("rol")
+        )
+        serializer = MensajeSerializer(mensaje_guardado)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+
+@api_view(["DELETE"])
+def mensajes_delete(request, conversacion_id):
+    caso_uso = EliminarMensajesPorConversacion(MensajeRepositoryDjango())
+    caso_uso.execute(conversacion_id)
+    return Response(status=status.HTTP_204_NO_CONTENT)

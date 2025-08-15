@@ -1,7 +1,7 @@
 from typing import List
 from core.models_domain.conversaciones import Mensaje
 from core.repositories.conversacion_repository import MensajeRepository
-from models.conversaciones import Mensaje as MensajeORM
+from infrastructure.models.conversaciones import Mensaje as MensajeORM
 
 class MensajeRepositoryDjango(MensajeRepository):
 
@@ -32,7 +32,8 @@ class MensajeRepositoryDjango(MensajeRepository):
                 rol=obj.rol,
                 contenido=obj.contenido,
                 fecha=obj.fecha
-            ) for obj in objs
+            )
+            for obj in objs
         ]
 
     def eliminar_por_conversacion(self, conversacion_id: int) -> None:
