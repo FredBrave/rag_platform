@@ -16,7 +16,7 @@ def CrearConversacionView(request):
         )
     serializer = ConversacionSerializer(conversacion)
     
-    return Response(serializer, status=status.HTTP_201_CREATED)
+    return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 @api_view(['GET'])
 def ObtenerConversacionView(request, conversacion_id):
