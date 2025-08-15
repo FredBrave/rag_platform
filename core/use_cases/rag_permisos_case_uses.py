@@ -24,6 +24,7 @@ class CrearPermisoRAG:
 
     def execute(self, rag_id: int, usuario_id: int, puede_editar: bool) -> RAGPermiso:
         permiso = RAGPermiso(
+            id=None,
             rag_id=rag_id,
             usuario_id=usuario_id,
             puede_editar=puede_editar

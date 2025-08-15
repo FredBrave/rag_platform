@@ -10,7 +10,7 @@ class RAGPermisoRepository(ABC):
         pass
 
     @abstractmethod
-    def puede_usuario_editar(self, rag_id: int, creador_id: int) -> bool:
+    def puede_usuario_editar(self, rag_id: int, usuario_id: int) -> bool:
         pass
 
     @abstractmethod

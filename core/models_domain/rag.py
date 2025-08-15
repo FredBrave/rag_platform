@@ -18,5 +18,5 @@ class RAG:
 class RAGPermiso:
     id: int | None
     rag_id: int
-    creador_id: int
+    usuario_id: int
     puede_editar: bool
