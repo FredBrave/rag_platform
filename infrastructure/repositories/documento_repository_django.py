@@ -12,6 +12,7 @@ class DocumentoRepositoryDjango(DocumentoRepository):
             id=documento.id,
             rag = rag_instance,
             nombre=documento.nombre,
+            archivo=documento.archivo,
             texto_extraido=documento.texto_extraido,
             fecha_subida=documento.fecha_subida
         )
