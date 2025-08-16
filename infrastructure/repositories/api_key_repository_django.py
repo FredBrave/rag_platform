@@ -1,7 +1,7 @@
 from typing import List, Optional
 from core.models_domain.api_keys import APIKey
 from core.repositories.api_key_repository import APIKeyRepository
-from models.api_keys import APIKey as APIKeyORM
+from infrastructure.models.api_keys import APIKey as APIKeyORM
 
 class APIKeyRepositoryDjango(APIKeyRepository):
 
@@ -30,6 +30,7 @@ class APIKeyRepositoryDjango(APIKeyRepository):
                 id=obj.id,
                 usuario_id=obj.usuario_id,
                 proveedor=obj.proveedor,
+                eliminado=obj.eliminado,
                 clave=obj.clave,
                 activa=obj.activa
             )
@@ -43,6 +44,7 @@ class APIKeyRepositoryDjango(APIKeyRepository):
                 id=obj.id,
                 usuario_id=obj.usuario_id,
                 proveedor=obj.proveedor,
+                eliminado=obj.eliminado,
                 clave=obj.clave,
                 activa=obj.activa
             ) for obj in objs
