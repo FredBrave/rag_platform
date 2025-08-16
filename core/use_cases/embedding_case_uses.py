@@ -7,7 +7,13 @@ class CrearEmbedding:
     def __init__(self, repository: EmbeddingRepository):
         self.repository = repository
 
-    def execute(self, embedding: Embedding) -> Embedding:
+    def execute(self, documento_id: int, texto_fragmento: str, vector: list, indice: int) -> Embedding:
+        embedding = Embedding(
+            documento_id=documento_id,
+            texto_fragmento=texto_fragmento,
+            vector=vector,
+            indice=indice
+        )
         return self.repository.guardar(embedding)
 
 
