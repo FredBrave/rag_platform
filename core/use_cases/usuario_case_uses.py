@@ -7,7 +7,8 @@ class CrearUsuario:
     def __init__(self, repository: UsuarioRepository):
         self.repository = repository
 
-    def execute(self, usuario: Usuario) -> Usuario:
+    def execute(self, usuario_data: dict) -> Usuario:
+        usuario = Usuario.from_dict(usuario_data)
         return self.repository.guardar(usuario)
 
 
