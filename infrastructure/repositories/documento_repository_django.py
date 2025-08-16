@@ -19,11 +19,11 @@ class DocumentoRepositoryDjango(DocumentoRepository):
 
     def obtener_por_id(self, documento_id: str) -> Documento:
         doc = DocumentoORM.objects.get(id=documento_id)
-        return Documento(id=doc.id, nombre=doc.nombre, texto_extraido=doc.texto_extraido)
+        return Documento(id=doc.id, nombre=doc.nombre, texto_extraido=None, rag_id=doc.rag_id, archivo=doc.archivo)
 
     def listar(self):
         docs = DocumentoORM.objects.only("id", "nombre")
-        return [Documento(id=doc.id, nombre=doc.nombre, texto_extraido=None) for doc in docs]
+        return [Documento(id=doc.id, nombre=doc.nombre, texto_extraido=None, rag_id=doc.rag_id, archivo=doc.archivo) for doc in docs]
     
     def eliminar(self, documento_id: str) -> None:
         DocumentoORM.objects.filter(id=documento_id).delete()

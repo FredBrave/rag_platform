@@ -16,10 +16,8 @@ def crear_documento(request, rag_id):
         nombre = serializer.validated_data["nombre"]
         archivo = serializer.validated_data["archivo"]
 
-
         folder_path = os.path.join(settings.MEDIA_ROOT, "rags", str(rag_id), "documentos")
         os.makedirs(folder_path, exist_ok=True)
-
 
         save_path = os.path.join(folder_path, archivo.name)
 
@@ -27,29 +25,26 @@ def crear_documento(request, rag_id):
             for chunk in archivo.chunks():
                 f.write(chunk)
 
-
-        file_url = request.build_absolute_uri(
-            os.path.join(settings.MEDIA_URL, "rags", str(rag_id), "documentos", archivo.name)
-        )
+        relative_path = os.path.join("rags", str(rag_id), "documentos", archivo.name)
 
         use_case = CrearDocumento(DocumentoRepositoryDjango())
         documento = use_case.execute(
-            rag_id= rag_id,
-            nombre= nombre,
-            archivo=file_url
+            rag_id=rag_id,
+            nombre=nombre,
+            archivo=relative_path
         )
 
         return Response({
             "id": documento.id,
             "nombre": documento.nombre,
-            "archivo": file_url
+            "archivo": relative_path
         }, status=status.HTTP_201_CREATED)
 
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 @api_view(["GET"])
-def obtener_documento(request, documento_id):
+def obtener_documento(request, documento_id, rag_id):
     use_case = ObtenerDocumento(DocumentoRepositoryDjango())
     documento = use_case.execute(documento_id)
 
@@ -59,12 +54,12 @@ def obtener_documento(request, documento_id):
     return Response({
         "id": documento.id,
         "nombre": documento.nombre,
-        "contenido": documento.contenido
+        "rag_id": documento.rag_id
     })
 
 
 @api_view(["GET"])
-def listar_documentos(request):
+def listar_documentos(request, rag_id):
     """
     Listar todos los documentos.
     """
@@ -74,8 +69,8 @@ def listar_documentos(request):
     return Response([
         {
             "id": d.id,
+            "rag_id": d.rag_id,
             "nombre": d.nombre
-           # "contenido": d.contenido
         } for d in documentos
     ])
 

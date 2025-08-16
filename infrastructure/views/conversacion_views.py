@@ -10,7 +10,7 @@ from core.use_cases.mensaje_case_uses import CrearMensaje, ListarMensajesPorConv
 from rest_framework import status
 
 @api_view(['POST'])
-def CrearConversacionView(request):
+def CrearConversacionView(request, rag_id):
     data = request.data
     caso_uso = CrearConversacion(ConversacionRepositoryDjango())
     conversacion = caso_uso.execute(
@@ -23,7 +23,7 @@ def CrearConversacionView(request):
     return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 @api_view(['GET'])
-def ObtenerConversacionView(request, conversacion_id):
+def ObtenerConversacionView(request, rag_id, conversacion_id):
     caso_uso = ObtenerConversacionPorId(ConversacionRepositoryDjango())
     conversacion = caso_uso.execute(conversacion_id)
 
@@ -34,7 +34,7 @@ def ObtenerConversacionView(request, conversacion_id):
     return Response(serializer.data)
 
 @api_view(['GET'])
-def ListarConversacionesUsuarioView(requets, usuario_id):
+def ListarConversacionesUsuarioView(requets, usuario_id, rag_id):
         caso_uso = ListarConversacionesPorUsuario(ConversacionRepositoryDjango())
         conversaciones = caso_uso.execute(usuario_id)
         serializer = ConversacionSerializer(conversaciones, many=True)
@@ -49,7 +49,7 @@ def EliminarConversacionView(requets, conversacion_id):
 
 
 @api_view(["GET", "POST"])
-def mensajes_list_create(request, conversacion_id):
+def mensajes_list_create(request, conversacion_id, rag_id):
     if request.method == "GET":
         caso_uso = ListarMensajesPorConversacion(MensajeRepositoryDjango())
         mensajes = caso_uso.execute(conversacion_id)
@@ -69,7 +69,7 @@ def mensajes_list_create(request, conversacion_id):
 
 
 @api_view(["DELETE"])
-def mensajes_delete(request, conversacion_id):
+def mensajes_delete(request, conversacion_id, rag_id):
     caso_uso = EliminarMensajesPorConversacion(MensajeRepositoryDjango())
     caso_uso.execute(conversacion_id)
     return Response(status=status.HTTP_204_NO_CONTENT)
