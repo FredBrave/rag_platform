@@ -5,7 +5,7 @@ from core.repositories.usuario_repository import UsuarioRepository
 from infrastructure.models.usuarios import Usuario as UsuarioORM
 
 class UsuarioRepositoryDjango(UsuarioRepository):
-    def guardar(self, usuario: Usuario) -> Usuario:
+    def guardar(self, usuario: Usuario) -> UsuarioORM:
         if usuario.id is not None:
             obj = UsuarioORM.objects.get(id=usuario.id)
         else:
@@ -17,8 +17,7 @@ class UsuarioRepositoryDjango(UsuarioRepository):
         if usuario.password:
             obj.password = make_password(usuario.password)
         obj.save()
-        usuario.id = obj.id
-        return usuario
+        return obj
 
     def obtener_por_id(self, usuario_id: int) -> Optional[Usuario]:
         try:
