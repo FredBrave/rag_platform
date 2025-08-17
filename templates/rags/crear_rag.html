@@ -1,0 +1,28 @@
+{% extends "main.html" %}
+{% block content %}
+
+<div class="container">
+    {% if rag %}
+        <h2>Editar RAG</h2>
+    {% else %}
+        <h2>Crear nuevo RAG</h2>
+    {% endif %}
+
+    <form method="POST">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">
+            {% if rag %}
+                Guardar Cambios
+            {% else %}
+                Crear RAG
+            {% endif %}
+        </button>
+    </form>
+
+    {% if error_msg %}
+        <p style="color: red;">{{ error_msg }}</p>
+    {% endif %}
+</div>
+
+{% endblock content %}

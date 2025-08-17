@@ -10,7 +10,9 @@
                     <li>
                         <strong>{{ rag.nombre }}</strong><br>
                         {{ rag.descripcion|truncatechars:100 }}<br>
-                        <small>Modelo: {{ rag.modelo_llm }} | Embedding: {{ rag.embedding_model }}</small>
+                        <small>Modelo: {{ rag.modelo_llm }} | Embedding: {{ rag.embedding_model }}</small><br>
+                        <a href="{% url 'editar_rag' rag.id %}">Editar</a> | 
+                        <a href="{% url 'eliminar_rag' rag.id %}" onclick="return confirm('¿Seguro que quieres eliminar este RAG?');">Eliminar</a>
                     </li>
                 {% endfor %}
             </ul>

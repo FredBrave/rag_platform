@@ -22,6 +22,24 @@ class CrearRAG:
         )
         return self.rag_repository.guardar(nuevo_rag)
 
+class EditarRAG:
+    def __init__(self, rag_repository: RAGRepository):
+        self.rag_repository = rag_repository
+
+    def execute(self, rag_id: int, data: dict) -> RAG:
+        rag_actual = self.rag_repository.obtener_por_id(rag_id)
+        if not rag_actual:
+            raise ValueError("RAG no encontrado")
+
+        rag_actual.nombre = data["nombre"]
+        rag_actual.descripcion = data["descripcion"]
+        rag_actual.privacidad = data["privacidad"]
+        rag_actual.modelo_llm = data["modelo_llm"]
+        rag_actual.embedding_model = data["embedding_model"]
+        rag_actual.fecha_actualizacion = datetime.now()
+
+        return self.rag_repository.guardar(rag_actual)
+    
 
 class ObtenerRagPorId:
     def __init__(self, repository):
