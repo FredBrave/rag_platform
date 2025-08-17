@@ -1,0 +1,23 @@
+{% extends "main.html" %}
+{% block content %}
+
+<div class="container">
+    <div class="card">
+        <h2>Mis RAGs</h2>
+        {% if user_rags %}
+            <ul>
+                {% for rag in user_rags %}
+                    <li>
+                        <strong>{{ rag.nombre }}</strong><br>
+                        {{ rag.descripcion|truncatechars:100 }}<br>
+                        <small>Modelo: {{ rag.modelo_llm }} | Embedding: {{ rag.embedding_model }}</small>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>No tienes RAGs creados.</p>
+        {% endif %}
+    </div>
+</div>
+
+{% endblock content %}

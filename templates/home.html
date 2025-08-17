@@ -1,33 +1,47 @@
 {% extends "main.html" %}
 {% block content %}
 
-<div class="home-container container">
+<div class="home-container" style="display: flex; gap: 1rem;">
 
-    <div class="card">
-        {% if user.is_authenticated %}
-            <h2>¡Bienvenido, {{ user.username }}!</h2>
-        {% else %}
-            <h2>Necesitas iniciar sesión para ver esta página.</h2>
-            <a href="{% url 'login' %}" class="btn-login">Iniciar sesión</a>
-        {% endif %}
+    <div class="sidebar" style="flex: 1;">
+        <div class="card">
+            <h3>Menú</h3>
+            <ul>
+                <li><a href="{% url 'home' %}">Inicio</a></li>
+                <li><a href="{% url 'mis_rags' %}">Mis RAGs</a></li>
+                <li><a href="#">Crear RAG</a></li>
+                <li><a href="#">Perfil</a></li>
+            </ul>
+        </div>
     </div>
 
-    <div class="card">
-        <h3>RAGs Públicos</h3>
-        {% if public_rags %}
-            <div class="rags-container">
-                {% for rag in public_rags %}
-                    <div class="rag-card">
-                        <h4>{{ rag.nombre }}</h4>
-                        <p>{{ rag.descripcion|truncatechars:100 }}</p>
-                        <small>Modelo: {{ rag.modelo_llm }} | Embedding: {{ rag.embedding_model }}</small>
-                    </div>
-                    <hr>
-                {% endfor %}
-            </div>
-        {% else %}
-            <p>No se encontraron RAGs públicos.</p>
-        {% endif %}
+    <div class="main-content" style="flex: 3;">
+        <div class="card">
+            {% if user.is_authenticated %}
+                <h2>¡Bienvenido, {{ user.username }}!</h2>
+            {% else %}
+                <h2>Necesitas iniciar sesión para ver esta página.</h2>
+                <a href="{% url 'login' %}" class="btn-login">Iniciar sesión</a>
+            {% endif %}
+        </div>
+
+        <div class="card">
+            <h3>RAGs Públicos</h3>
+            {% if public_rags %}
+                <div class="rags-container">
+                    {% for rag in public_rags %}
+                        <div class="rag-card">
+                            <h4>{{ rag.nombre }}</h4>
+                            <p>{{ rag.descripcion|truncatechars:100 }}</p>
+                            <small>Modelo: {{ rag.modelo_llm }} | Embedding: {{ rag.embedding_model }}</small>
+                        </div>
+                        <hr>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p>No se encontraron RAGs públicos.</p>
+            {% endif %}
+        </div>
     </div>
 
 </div>
