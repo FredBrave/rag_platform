@@ -40,6 +40,12 @@ class ListarRAGsPorUsuario:
     def execute(self, creador_id: int) -> List[RAG]:
         return self.rag_repository.listar_por_usuario(creador_id)
 
+class ListarRAGsPorPrivacidad:
+    def __init__(self, rag_repository: RAGRepository):
+        self.rag_repository = rag_repository
+
+    def execute(self, privacidad: bool) -> List[RAG]:
+        return self.rag_repository.listar_por_privacidad(privacidad)
 
 class EliminarRAG:
     def __init__(self, rag_repository: RAGRepository):

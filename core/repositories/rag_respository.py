@@ -38,6 +38,11 @@ class RAGRepository(ABC):
     def listar_por_usuario(self, creador_id: int) -> List[RAG]:
         """Lista todos los RAGs que pertenecen a un usuario."""
         pass
+    
+    @abstractmethod
+    def listar_por_privacidad(self, privacidad: bool) -> List[RAG]:
+        """Lista todos los RAGs segun si son privados o no"""
+        pass
 
     @abstractmethod
     def eliminar(self, rag_id: int) -> None:

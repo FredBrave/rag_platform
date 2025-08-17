@@ -8,7 +8,7 @@ class RAG:
     nombre: str
     descripcion: str
     creador_id: int
-    privacidad: bool
+    privacidad: str
     modelo_llm: str
     embedding_model: str
     fecha_creacion: Optional[datetime] = None

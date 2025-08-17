@@ -70,6 +70,24 @@ class RagRepositoryDjango(RAGRepository):
             )
             for obj in rag_objs
         ]
+    
+    def listar_por_privacidad(self, privacidad: str):
+        queryset = RAGORM.objects.filter(privacidad=privacidad)
+        rags = [
+            RAG(
+                id=r.id,
+                nombre=r.nombre,
+                descripcion=r.descripcion,
+                creador_id=r.creador.id,
+                privacidad=r.privacidad,
+                modelo_llm=r.modelo_llm,
+                embedding_model=r.embedding_model,
+                fecha_creacion=r.fecha_creacion,
+                fecha_actualizacion=r.fecha_actualizacion,
+            )
+            for r in queryset
+        ]
+        return rags
 
     def eliminar(self, rag_id: int) -> bool:
         """Elimina un RAG por ID. Devuelve True si se eliminó, False si no existía."""

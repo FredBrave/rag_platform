@@ -15,14 +15,16 @@
     <div class="card">
         <h3>RAGs Públicos</h3>
         {% if public_rags %}
-            <ul>
+            <div class="rags-container">
                 {% for rag in public_rags %}
-                    <li>
-                        <strong>{{ rag.title }}</strong><br>
-                        {{ rag.description|truncatechars:100 }}
-                    </li>
+                    <div class="rag-card">
+                        <h4>{{ rag.nombre }}</h4>
+                        <p>{{ rag.descripcion|truncatechars:100 }}</p>
+                        <small>Modelo: {{ rag.modelo_llm }} | Embedding: {{ rag.embedding_model }}</small>
+                    </div>
+                    <hr>
                 {% endfor %}
-            </ul>
+            </div>
         {% else %}
             <p>No se encontraron RAGs públicos.</p>
         {% endif %}
