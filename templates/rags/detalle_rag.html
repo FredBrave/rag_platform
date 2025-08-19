@@ -1,0 +1,47 @@
+{% extends "main.html" %}
+{% block content %}
+
+<div class="container">
+    <div class="card">
+        <h2>{{ rag.nombre }}</h2>
+        <p>{{ rag.descripcion }}</p>
+    </div>
+
+    <div class="card mt-4">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <h3>Documentos</h3>
+            <a href="{% url 'crear_documento' rag.id %}" class="btn btn-primary">+ Crear</a>
+        </div>
+        {% if documentos %}
+            <ul>
+                {% for doc in documentos %}
+                    <li>{{ doc.nombre }} ({{ doc.tipo }})</li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>No hay documentos.</p>
+        {% endif %}
+    </div>
+
+    <div class="card mt-4">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <h3>Conversaciones</h3>
+            <a href="{% url 'crear_conversacion' rag.id %}" class="btn btn-primary">+ Crear</a>
+        </div>
+        {% if conversaciones %}
+            <ul>
+                {% for conv in conversaciones %}
+                    <li>
+                        <a href="{% url 'detalle_conversacion' rag.id conv.id %}">
+                            {{ conv.titulo }}
+                        </a>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>No hay conversaciones.</p>
+        {% endif %}
+    </div>
+</div>
+
+{% endblock content %}

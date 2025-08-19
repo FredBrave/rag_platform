@@ -11,4 +11,9 @@ urlpatterns = [
     path('crear_rag/', page_views.crear_rag, name='crear_rag'),
     path('rags/editar/<int:rag_id>/', page_views.editar_rag, name='editar_rag'),
     path('eliminar_rag/<int:rag_id>/', page_views.eliminar_rag, name='eliminar_rag'),
+    path('rags/<int:rag_id>/', page_views.detalle_rag, name='detalle_rag'),
+    path("rags/<int:rag_id>/conversacion/crear/", page_views.crear_conversacion, name="crear_conversacion"),
+    path("rags/<int:rag_id>/conversacion/<int:conversacion_id>/", page_views.detalle_conversacion, name="detalle_conversacion"),
+    path("rags/<int:rag_id>/documento/crear/", page_views.crear_documento, name="crear_documento"),
+
 ]

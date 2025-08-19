@@ -1,0 +1,12 @@
+{% extends "main.html" %}
+{% block content %}
+<h2>Crear Documento para "{{ rag.nombre }}"</h2>
+
+<form method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn btn-primary">Subir Documento</button>
+</form>
+
+<a href="{% url 'detalle_rag' rag.id %}">Volver al RAG</a>
+{% endblock %}  

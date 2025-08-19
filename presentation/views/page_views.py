@@ -1,9 +1,13 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from infrastructure.repositories.rag_repository_django import RagRepositoryDjango
+from infrastructure.repositories.conversacion_repository_django import ConversacionRepositoryDjango
+from infrastructure.repositories.documento_repository_django import DocumentoRepositoryDjango
 from core.use_cases.rag_case_uses import ListarRAGsPorPrivacidad, ListarRAGsPorUsuario, CrearRAG, EditarRAG, EliminarRAG
-from presentation.forms import RAGForm
+from core.use_cases.conversacion_case_uses import ListarConversacionesPorUsuario, CrearConversacion
+from core.use_cases.documento_case_uses import ListarDocumentos, CrearDocumento
+from presentation.forms import RAGForm, DocumentoForm, ConversacionForm
 from infrastructure.models.rag import RAG as RAGORM
 
 
@@ -106,3 +110,74 @@ def eliminar_rag(request, rag_id):
     except Exception as e:
         messages.error(request, f"Ocurrió un error al eliminar el RAG: {e}")
         return redirect('mis_rags')
+    
+@login_required
+def detalle_rag(request, rag_id):
+    rag = get_object_or_404(RAGORM, id=rag_id, creador=request.user)
+    documento_repository = DocumentoRepositoryDjango()
+    conversacion_repository = ConversacionRepositoryDjango()
+    listar_documentos = ListarDocumentos(documento_repository)
+    listar_conversaciones = ListarConversacionesPorUsuario(conversacion_repository)
+    documentos = [doc for doc in listar_documentos.execute() if doc.rag_id == rag.id]
+    conversaciones = [
+        conv for conv in listar_conversaciones.execute(request.user.id) 
+        if conv.rag_id == rag.id
+    ]
+    return render(request, "rags/detalle_rag.html", {
+        "rag": rag,
+        "documentos": documentos,
+        "conversaciones": conversaciones
+    })
+
+
+
+@login_required
+def crear_conversacion(request, rag_id):
+    rag = get_object_or_404(RAGORM, id=rag_id, creador=request.user)
+    conversacion_repository = ConversacionRepositoryDjango()
+    crear_conversacion_uc = CrearConversacion(conversacion_repository)
+
+    if request.method == "POST":
+        form = ConversacionForm(request.POST)
+        if form.is_valid():
+            crear_conversacion_uc.execute(
+                rag.id,
+                request.user.id,
+                form.cleaned_data['titulo']
+            )
+            return redirect("detalle_rag", rag_id=rag.id)
+    else:
+        form = ConversacionForm()
+
+    return render(request, "rags/crear_conversacion.html", {
+        "rag": rag,
+        "form": form
+    })
+
+@login_required
+def crear_documento(request, rag_id):
+    rag = get_object_or_404(RAGORM, id=rag_id, creador=request.user)
+    documento_repository = DocumentoRepositoryDjango()
+    crear_documento_uc = CrearDocumento(documento_repository)
+
+    if request.method == "POST":
+        form = DocumentoForm(request.POST, request.FILES)
+        if form.is_valid():
+            crear_documento_uc.execute(
+                rag.id,
+                form.cleaned_data['nombre'],
+                form.cleaned_data['archivo']
+            )
+            return redirect("detalle_rag", rag_id=rag.id)
+    else:
+        form = DocumentoForm()
+
+    return render(request, "rags/crear_documento.html", {
+        "rag": rag,
+        "form": form
+    })
+
+
+@login_required
+def detalle_conversacion(request, rag_id, conversacion_id):
+    return redirect('mis_rags')
