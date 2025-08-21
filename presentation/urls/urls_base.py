@@ -15,5 +15,6 @@ urlpatterns = [
     path("rags/<int:rag_id>/conversacion/crear/", page_views.crear_conversacion, name="crear_conversacion"),
     path("rags/<int:rag_id>/conversacion/<int:conversacion_id>/", page_views.detalle_conversacion, name="detalle_conversacion"),
     path("rags/<int:rag_id>/documento/crear/", page_views.crear_documento, name="crear_documento"),
-
+    path("rags/<int:rag_id>/documento/<int:documento_id>/eliminar/", page_views.eliminar_documento, name="eliminar_documento"),
+    path("rags/<int:rag_id>/conversacion/<int:conversacion_id>/eliminar/", page_views.eliminar_conversacion, name="eliminar_conversacion"),
 ]

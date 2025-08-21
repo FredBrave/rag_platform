@@ -4,11 +4,14 @@ from django.contrib import messages
 from infrastructure.repositories.rag_repository_django import RagRepositoryDjango
 from infrastructure.repositories.conversacion_repository_django import ConversacionRepositoryDjango
 from infrastructure.repositories.documento_repository_django import DocumentoRepositoryDjango
+from infrastructure.repositories.mensaje_repository_django import MensajeRepositoryDjango
 from core.use_cases.rag_case_uses import ListarRAGsPorPrivacidad, ListarRAGsPorUsuario, CrearRAG, EditarRAG, EliminarRAG
-from core.use_cases.conversacion_case_uses import ListarConversacionesPorUsuario, CrearConversacion
-from core.use_cases.documento_case_uses import ListarDocumentos, CrearDocumento
+from core.use_cases.conversacion_case_uses import ListarConversacionesPorUsuario, CrearConversacion, EliminarConversacion
+from core.use_cases.documento_case_uses import ListarDocumentos, CrearDocumento, EliminarDocumento
+from core.use_cases.mensaje_case_uses import CrearMensaje, ListarMensajesPorConversacion
 from presentation.forms import RAGForm, DocumentoForm, ConversacionForm
 from infrastructure.models.rag import RAG as RAGORM
+from infrastructure.models.conversaciones import Conversacion as ConversacionORM
 
 
 @login_required(login_url='login')
@@ -180,4 +183,47 @@ def crear_documento(request, rag_id):
 
 @login_required
 def detalle_conversacion(request, rag_id, conversacion_id):
-    return redirect('mis_rags')
+    rag = get_object_or_404(RAGORM, id=rag_id)
+    conversacion = get_object_or_404(ConversacionORM, id=conversacion_id, rag=rag)
+
+    repo = MensajeRepositoryDjango()
+    listar_mensajes = ListarMensajesPorConversacion(repo)
+    crear_mensaje = CrearMensaje(repo)
+
+    mensajes = listar_mensajes.execute(conversacion_id)
+
+    if request.method == "POST":
+        contenido = request.POST.get("contenido")
+        if contenido:
+            crear_mensaje.execute(conversacion_id, contenido, rol="usuario")
+            return redirect("detalle_conversacion", rag_id=rag.id, conversacion_id=conversacion.id)
+
+    return render(request, "rags/detalle_conversacion.html", {
+        "rag": rag,
+        "conversacion": conversacion,
+        "mensajes": mensajes,
+    })
+
+
+@login_required
+def eliminar_documento(request, rag_id, documento_id):
+    rag = get_object_or_404(RAGORM, id=rag_id)
+
+    if request.method == "POST":
+        repo = DocumentoRepositoryDjango()
+        eliminar_documento_uc = EliminarDocumento(repo)
+        eliminar_documento_uc.execute(documento_id)
+
+    return redirect("detalle_rag", rag_id=rag.id)
+
+
+@login_required
+def eliminar_conversacion(request, rag_id, conversacion_id):
+    rag = get_object_or_404(RAGORM, id=rag_id)
+
+    if request.method == "POST":
+        repo = ConversacionRepositoryDjango()
+        eliminar_conversacion_uc = EliminarConversacion(repo)
+        eliminar_conversacion_uc.execute(conversacion_id)
+
+    return redirect("detalle_rag", rag_id=rag.id)

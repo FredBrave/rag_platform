@@ -7,6 +7,7 @@
         <p>{{ rag.descripcion }}</p>
     </div>
 
+    <!-- Documentos -->
     <div class="card mt-4">
         <div style="display: flex; justify-content: space-between; align-items: center;">
             <h3>Documentos</h3>
@@ -15,7 +16,15 @@
         {% if documentos %}
             <ul>
                 {% for doc in documentos %}
-                    <li>{{ doc.nombre }} ({{ doc.tipo }})</li>
+                    <li style="display: flex; justify-content: space-between; align-items: center;">
+                        <a href="{{ doc.archivo.url }}" target="_blank">
+                            {{ doc.nombre }} ({{ doc.tipo }})
+                        </a>
+                        <form method="post" action="{% url 'eliminar_documento' rag.id doc.id %}" style="margin:0;">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-danger btn-sm">🗑 Eliminar</button>
+                        </form>
+                    </li>
                 {% endfor %}
             </ul>
         {% else %}
@@ -23,6 +32,7 @@
         {% endif %}
     </div>
 
+    <!-- Conversaciones -->
     <div class="card mt-4">
         <div style="display: flex; justify-content: space-between; align-items: center;">
             <h3>Conversaciones</h3>
@@ -31,10 +41,14 @@
         {% if conversaciones %}
             <ul>
                 {% for conv in conversaciones %}
-                    <li>
+                    <li style="display: flex; justify-content: space-between; align-items: center;">
                         <a href="{% url 'detalle_conversacion' rag.id conv.id %}">
                             {{ conv.titulo }}
                         </a>
+                        <form method="post" action="{% url 'eliminar_conversacion' rag.id conv.id %}" style="margin:0;">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-danger btn-sm">🗑 Eliminar</button>
+                        </form>
                     </li>
                 {% endfor %}
             </ul>
