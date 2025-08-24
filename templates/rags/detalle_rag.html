@@ -7,7 +7,6 @@
         <p>{{ rag.descripcion }}</p>
     </div>
 
-    <!-- Documentos -->
     <div class="card mt-4">
         <div style="display: flex; justify-content: space-between; align-items: center;">
             <h3>Documentos</h3>
@@ -32,7 +31,6 @@
         {% endif %}
     </div>
 
-    <!-- Conversaciones -->
     <div class="card mt-4">
         <div style="display: flex; justify-content: space-between; align-items: center;">
             <h3>Conversaciones</h3>
@@ -55,6 +53,14 @@
         {% else %}
             <p>No hay conversaciones.</p>
         {% endif %}
+    </div>
+
+    <div class="card mt-4">
+        <h3>Embeddings</h3>
+        <form method="post" action="{% url 'generar_embeddings' rag.id %}">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-success">⚡ Generar Embeddings</button>
+        </form>
     </div>
 </div>
 

@@ -5,10 +5,12 @@ from infrastructure.repositories.rag_repository_django import RagRepositoryDjang
 from infrastructure.repositories.conversacion_repository_django import ConversacionRepositoryDjango
 from infrastructure.repositories.documento_repository_django import DocumentoRepositoryDjango
 from infrastructure.repositories.mensaje_repository_django import MensajeRepositoryDjango
+from infrastructure.repositories.embedding_repository_django import EmbeddingRepositoryDjango
 from core.use_cases.rag_case_uses import ListarRAGsPorPrivacidad, ListarRAGsPorUsuario, CrearRAG, EditarRAG, EliminarRAG
 from core.use_cases.conversacion_case_uses import ListarConversacionesPorUsuario, CrearConversacion, EliminarConversacion
 from core.use_cases.documento_case_uses import ListarDocumentos, CrearDocumento, EliminarDocumento
 from core.use_cases.mensaje_case_uses import CrearMensaje, ListarMensajesPorConversacion
+from core.use_cases.embedding_case_uses import GenerarEmbeddingsRAG
 from presentation.forms import RAGForm, DocumentoForm, ConversacionForm
 from infrastructure.models.rag import RAG as RAGORM
 from infrastructure.models.conversaciones import Conversacion as ConversacionORM
@@ -227,3 +229,12 @@ def eliminar_conversacion(request, rag_id, conversacion_id):
         eliminar_conversacion_uc.execute(conversacion_id)
 
     return redirect("detalle_rag", rag_id=rag.id)
+
+
+@login_required
+def generar_embeddings_rag(request, rag_id):
+    doc_repo = DocumentoRepositoryDjango()
+    emb_repo = EmbeddingRepositoryDjango()
+    use_case = GenerarEmbeddingsRAG(doc_repo, emb_repo)
+    use_case.execute(rag_id)
+    return redirect("detalle_rag", rag_id=rag_id)
